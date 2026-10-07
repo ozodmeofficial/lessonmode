@@ -1,0 +1,10 @@
+# Build natijalari
+/dist/
+*.exe
+
+# Mahalliy sozlama (haqiqiy token/ID shu yerда bo'lishi mumkin — git ga tushmasin!)
+config.json
+
+# OS
+.DS_Store
+Thumbs.db

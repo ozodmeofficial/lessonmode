@@ -1,0 +1,57 @@
+name: build-lessonmode
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      bot_token:
+        description: "Telegram bot token (ixtiyoriy, exe ichiga joylashtiriladi)"
+        required: false
+        default: ""
+      admin_id:
+        description: "Telegram admin ID (ixtiyoriy)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Build LessonMode.exe
+        run: |
+          mkdir -p dist
+          LDFLAGS="-s -w -H=windowsgui"
+          if [ -n "${{ github.event.inputs.bot_token }}" ]; then
+            LDFLAGS="$LDFLAGS -X main.buildBotToken=${{ github.event.inputs.bot_token }}"
+          fi
+          if [ -n "${{ github.event.inputs.admin_id }}" ]; then
+            LDFLAGS="$LDFLAGS -X main.buildAdminID=${{ github.event.inputs.admin_id }}"
+          fi
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "$LDFLAGS" -o dist/LessonMode.exe .
+          cp config.sample.json dist/config.sample.json
+          ls -lh dist
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LessonMode
+          path: dist/*
+
+      - name: Release (tag bo'lsa)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/LessonMode.exe
+            dist/config.sample.json

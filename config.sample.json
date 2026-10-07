@@ -1,0 +1,12 @@
+{
+  "botToken": "BU_YERGA_BOT_TOKEN",
+  "adminId": 123456789,
+  "schoolName": "LessonMode",
+  "closeDistractingApps": true,
+  "reapplySeconds": 5,
+  "codeTtlSeconds": 300,
+  "maxAttempts": 5,
+  "extraBlocked": [],
+  "extraAllowed": [],
+  "autoStart": true
+}
